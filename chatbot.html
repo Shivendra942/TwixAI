@@ -1,0 +1,95 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}AIChatBot{% endblock %}
+
+{% block content %}
+
+<h2 class="text-center mb-4 fw-bold">
+  🤖 AIChatBot <span class="text-warning">(Gemini)</span>
+</h2>
+
+<div id="chat-box"
+     style="
+       height: 380px;
+       overflow-y: auto;
+       border: 1px solid #444;
+       padding: 14px;
+       border-radius: 10px;
+       background: #111;
+       color: #f1f1f1;
+     ">
+</div>
+
+<input id="user-input"
+       class="form-control mt-3"
+       placeholder="Ask something..."
+       onkeydown="if(event.key==='Enter') sendMessage()"/>
+
+<button class="btn btn-warning mt-3 w-100 fw-bold" onclick="sendMessage()">
+  Send
+</button>
+
+<script>
+function getCSRFToken() {
+  return document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+}
+
+function sendMessage() {
+  const input = document.getElementById("user-input");
+  const message = input.value.trim();
+  if (!message) return;
+
+  const chatBox = document.getElementById("chat-box");
+
+  chatBox.innerHTML += `
+    <div class="mb-2">
+      <b>You:</b> ${message}
+    </div>
+  `;
+
+  input.value = "";
+
+  chatBox.innerHTML += `
+    <div id="typing" class="text-muted mb-2">
+      <i>AI is typing...</i>
+    </div>
+  `;
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  fetch("{% url 'chat_page' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+    body: JSON.stringify({ message })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("typing")?.remove();
+
+    chatBox.innerHTML += `
+      <div class="mb-3">
+        <b class="text-warning">AI:</b> ${data.reply}
+      </div>
+    `;
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+  })
+  .catch(() => {
+    document.getElementById("typing")?.remove();
+    chatBox.innerHTML += `
+      <div class="text-danger mb-2">
+        AI Error. Please try again.
+      </div>
+    `;
+  });
+}
+</script>
+
+{% endblock %}

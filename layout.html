@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Shivendra
+        {% endblock %}
+    </title>
+
+    <!-- ================= CUSTOM THEME ================= -->
+    <style>
+        /* -------- GLOBAL -------- */
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+        }
+
+        /* -------- NAVBAR -------- */
+        .navbar {
+            background-color: #000;
+            border-radius: 12px;
+            margin: 15px;
+            padding: 10px 20px;
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #fff !important;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            margin-right: 10px;
+            font-weight: 500;
+            color: #ccc !important;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+        }
+
+        /* -------- BUTTONS (GRAY) -------- */
+        .btn {
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-weight: 500;
+            background-color: #444;
+            border: 1px solid #666;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #666;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .btn-primary,
+        .btn-danger,
+        .btn-warning,
+        .btn-outline-success {
+            background-color: #444 !important;
+            border-color: #666 !important;
+            color: #fff !important;
+        }
+
+        /* -------- CONTAINER -------- */
+        .container {
+            background-color: #111;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+        }
+
+        /* -------- HEADINGS -------- */
+        h1, h2, h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* -------- FLOATING AI CHAT BUTTON -------- */
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            background-color: #444;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            z-index: 9999;
+        }
+
+        .ai-chat-btn:hover {
+            background-color: #666;
+            transform: scale(1.1);
+            color: #fff;
+        }
+    </style>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'tweet_list' %}">TwixBar</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'tweet_list' %}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tweet_create' %}">Create Tweet</a>
+                </li>
+
+            </ul>
+
+            <a href="{% url 'tweet_list' %}" class="btn mx-2">Tweet Home</a>
+
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button class="btn mx-2" type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn mx-2">Login</a>
+                <a href="{% url 'register' %}" class="btn mx-2">Register</a>
+            {% endif %}
+
+        </div>
+    </div>
+</nav>
+
+<!-- ================= PAGE CONTENT ================= -->
+<div class="container mt-4">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<!-- ================= FLOATING AI CHAT ================= -->
+<a href="{% url 'chat' %}" class="ai-chat-btn" title="AI Chat">
+    🤖
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
